@@ -57,8 +57,7 @@ const TRACKS = [
 const containerVariants = {
   playing: {
     backgroundColor: "var(--color-playing)",
-    boxShadow:
-      "0 25px 60px color-mix(in srgb, var(--color-primary-300) 45%, transparent)",
+    boxShadow: "0 0 40px 0 rgba(139, 92, 246, 0.3)",
   },
   paused: {
     backgroundColor: "var(--color-card)",
