@@ -288,7 +288,7 @@ export function MusicPlayer() {
   };
 
   return (
-    <div className="w-full max-w-[500px]">
+    <div className="w-full max-w-125">
       <motion.div
         className="relative overflow-hidden rounded-[28px] border border-[var(--color-neutral-800)] p-[28px]"
         variants={containerVariants}
@@ -297,6 +297,7 @@ export function MusicPlayer() {
       >
         <div className="flex items-center gap-6">
           <motion.div
+            id="album-art-div"
             className="flex h-30 w-30 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,var(--color-primary-200),var(--color-pink-600))] shadow-[0_12px_24px_color-mix(in_srgb,var(--color-black)_40%,transparent)]"
             animate={{
               scale:
@@ -323,6 +324,7 @@ export function MusicPlayer() {
               className="h-[60px] w-[48px] object-fill"
             /> */}
             <img
+              id="album-art-image"
               src="/album-art.png"
               alt="Music icon"
               className="h-auto w-[48px] object-fill"
