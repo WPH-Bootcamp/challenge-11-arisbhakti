@@ -2,20 +2,60 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type PlayerState = "playing" | "paused" | "loading";
 
-const TRACK = {
-  title: "Awesome Song Title",
-  artist: "Amazing Artist",
-};
-
-const AUDIO_SOURCES = [
-  { src: "/music/background-music.mp3", type: "audio/mpeg" },
+const TRACKS = [
   {
+    title: "Awesome Song Title",
+    artist: "Amazing Artist",
+    src: "/music/background-music.mp3",
+  },
+  {
+    title: "Late Night Drive",
+    artist: "SoundHelix",
     src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    type: "audio/mpeg",
+  },
+  {
+    title: "Neon Lights",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  },
+  {
+    title: "City Skyline",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  },
+  {
+    title: "Midnight Pulse",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  },
+  {
+    title: "Starlit Avenue",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  },
+  {
+    title: "Afterglow",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  },
+  {
+    title: "Neon Horizon",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  },
+  {
+    title: "Skyline Drift",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  },
+  {
+    title: "Violet Nights",
+    artist: "SoundHelix",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
   },
 ];
 
@@ -61,6 +101,15 @@ const equalizerVariants = {
   },
 };
 
+const getRandomIndex = (current: number, total: number) => {
+  if (total <= 1) return current;
+  let next = current;
+  while (next === current) {
+    next = Math.floor(Math.random() * total);
+  }
+  return next;
+};
+
 const formatTime = (value: number) => {
   if (!Number.isFinite(value)) return "0:00";
   const minutes = Math.floor(value / 60);
@@ -71,8 +120,11 @@ const formatTime = (value: number) => {
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const toggleTimeoutRef = useRef<number | null>(null);
+  const trackHistoryRef = useRef<number[]>([]);
+  const playerStateRef = useRef<PlayerState>("paused");
 
   const [playerState, setPlayerState] = useState<PlayerState>("paused");
+  const [trackIndex, setTrackIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.65);
@@ -80,6 +132,7 @@ export function MusicPlayer() {
   const [isRepeat, setIsRepeat] = useState(false);
   const [isVolumeHover, setIsVolumeHover] = useState(false);
 
+  const currentTrack = TRACKS[trackIndex] ?? TRACKS[0];
   const isPlaying = playerState === "playing";
   const isLoading = playerState === "loading";
 
@@ -108,31 +161,54 @@ export function MusicPlayer() {
         : "var(--color-neutral-500)";
 
   useEffect(() => {
+    playerStateRef.current = playerState;
+  }, [playerState]);
+
+  const handleNextTrack = useCallback(() => {
+    setTrackIndex((prevIndex) => {
+      const nextIndex = isShuffle
+        ? getRandomIndex(prevIndex, TRACKS.length)
+        : (prevIndex + 1) % TRACKS.length;
+      if (isShuffle) {
+        trackHistoryRef.current.push(prevIndex);
+      }
+      return nextIndex;
+    });
+  }, [isShuffle]);
+  
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const handleTime = () => setCurrentTime(audio.currentTime);
     const handleMetadata = () => setDuration(audio.duration || 0);
+    const handleError = () => {
+      handleNextTrack();
+    };
     const handleEnded = () => {
-      if (isRepeat) {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      } else {
-        audio.currentTime = 0;
-        setCurrentTime(0);
-        setPlayerState("paused");
-      }
+      if (isRepeat) return;
+      audio.currentTime = 0;
+      setCurrentTime(0);
+      handleNextTrack();
     };
 
     audio.addEventListener("timeupdate", handleTime);
     audio.addEventListener("loadedmetadata", handleMetadata);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTime);
       audio.removeEventListener("loadedmetadata", handleMetadata);
       audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
     };
+  }, [isRepeat, handleNextTrack]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.loop = isRepeat;
   }, [isRepeat]);
 
   useEffect(() => {
@@ -153,6 +229,18 @@ export function MusicPlayer() {
   }, [playerState]);
 
   useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.load();
+    audio.currentTime = 0;
+    setCurrentTime(0);
+    setDuration(0);
+    if (playerStateRef.current === "playing") {
+      audio.play().catch(() => {});
+    }
+  }, [trackIndex]);
+
+  useEffect(() => {
     return () => {
       if (toggleTimeoutRef.current) {
         window.clearTimeout(toggleTimeoutRef.current);
@@ -169,22 +257,36 @@ export function MusicPlayer() {
     }, 500);
   };
 
+  
+
+  const handlePrevTrack = useCallback(() => {
+    if (isShuffle && trackHistoryRef.current.length > 0) {
+      const previousIndex = trackHistoryRef.current.pop();
+      if (previousIndex !== undefined) {
+        setTrackIndex(previousIndex);
+        return;
+      }
+    }
+    setTrackIndex(
+      (prevIndex) => (prevIndex - 1 + TRACKS.length) % TRACKS.length,
+    );
+  }, [isShuffle]);
+
+  const handleShuffleToggle = () => {
+    setIsShuffle((prev) => {
+      const next = !prev;
+      if (next) {
+        trackHistoryRef.current = [];
+      }
+      return next;
+    });
+  };
+
   const handleSeek = (value: number) => {
     if (!duration) return;
     const audio = audioRef.current;
     if (!audio) return;
     const nextTime = Math.min((value / 100) * duration, duration);
-    audio.currentTime = nextTime;
-    setCurrentTime(nextTime);
-  };
-
-  const handleSkip = (amount: number) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    const nextTime = Math.min(
-      Math.max(audio.currentTime + amount, 0),
-      duration,
-    );
     audio.currentTime = nextTime;
     setCurrentTime(nextTime);
   };
@@ -229,10 +331,10 @@ export function MusicPlayer() {
           <div className="flex flex-1 flex-col gap-[6px]">
             <div className="space-y-[4px]">
               <h3 className="text-[18px] font-semibold text-[var(--color-neutral-25)]">
-                {TRACK.title}
+                {currentTrack.title}
               </h3>
               <p className="text-[14px] text-[var(--color-neutral-400)]">
-                {TRACK.artist}
+                {currentTrack.artist}
               </p>
             </div>
 
@@ -274,7 +376,7 @@ export function MusicPlayer() {
           </div>
           <div className="flex items-center justify-between text-[12px] text-[var(--color-neutral-500)]">
             <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration || 225)}</span>
+            <span>{formatTime(duration)}</span>
           </div>
         </div>
 
@@ -282,14 +384,14 @@ export function MusicPlayer() {
           <button
             type="button"
             aria-pressed={isShuffle}
-            onClick={() => setIsShuffle((prev) => !prev)}
-            className="group flex h-[40px] w-[40px] items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            onClick={handleShuffleToggle}
+            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/shuffle-button.svg"
               alt="Shuffle"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className={`transition duration-200 ${
                 isShuffle ? "brightness-200" : "group-hover:brightness-200"
               }`}
@@ -298,14 +400,14 @@ export function MusicPlayer() {
 
           <button
             type="button"
-            onClick={() => handleSkip(-10)}
-            className="group flex h-[40px] w-[40px] items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            onClick={handlePrevTrack}
+            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/previous-button.svg"
               alt="Previous"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className="transition duration-200 group-hover:brightness-200"
             />
           </button>
@@ -316,7 +418,7 @@ export function MusicPlayer() {
             aria-busy={isLoading}
             onClick={handlePlayToggle}
             disabled={isLoading}
-            className="flex h-[56px] w-[56px] items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
+            className="flex h-[68px] w-[68px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
             animate={{ backgroundColor: playButtonColor }}
             transition={{ type: "spring", stiffness: 260, damping: 18 }}
             whileHover={!isLoading ? { scale: 1.05 } : undefined}
@@ -361,14 +463,14 @@ export function MusicPlayer() {
 
           <button
             type="button"
-            onClick={() => handleSkip(10)}
-            className="group flex h-[40px] w-[40px] items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            onClick={handleNextTrack}
+            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/next-button.svg"
               alt="Next"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className="transition duration-200 group-hover:brightness-200"
             />
           </button>
@@ -377,13 +479,13 @@ export function MusicPlayer() {
             type="button"
             aria-pressed={isRepeat}
             onClick={() => setIsRepeat((prev) => !prev)}
-            className="group flex h-[40px] w-[40px] items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/repeat-button.svg"
               alt="Repeat"
-              width={20}
-              height={20}
+              width={28}
+              height={28}
               className={`transition duration-200 ${
                 isRepeat ? "brightness-200" : "group-hover:brightness-200"
               }`}
@@ -427,11 +529,7 @@ export function MusicPlayer() {
           </div>
         </div>
 
-        <audio ref={audioRef} preload="metadata">
-          {AUDIO_SOURCES.map((source) => (
-            <source key={source.src} src={source.src} type={source.type} />
-          ))}
-        </audio>
+        <audio ref={audioRef} src={currentTrack.src} preload="metadata" />
       </motion.div>
     </div>
   );
