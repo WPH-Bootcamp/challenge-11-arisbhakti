@@ -8,11 +8,6 @@ type PlayerState = "playing" | "paused" | "loading";
 
 const TRACKS = [
   {
-    title: "Awesome Song Title",
-    artist: "Amazing Artist",
-    src: "/music/background-music.mp3",
-  },
-  {
     title: "Late Night Drive",
     artist: "SoundHelix",
     src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
@@ -61,7 +56,7 @@ const TRACKS = [
 
 const containerVariants = {
   playing: {
-    backgroundColor: "var(--color-card)",
+    backgroundColor: "var(--color-playing)",
     boxShadow:
       "0 25px 60px color-mix(in srgb, var(--color-primary-300) 45%, transparent)",
   },
@@ -290,7 +285,7 @@ export function MusicPlayer() {
   return (
     <div className="w-full max-w-125">
       <motion.div
-        className="relative overflow-hidden rounded-[28px] border border-[var(--color-neutral-800)] p-[28px]"
+        className="relative overflow-hidden rounded-[28px] border border-[var(--color-neutral-800)] p-[28px] flex flex-col"
         variants={containerVariants}
         animate={playerState}
         transition={{ duration: 0.3, ease: "easeOut" }}
@@ -298,7 +293,7 @@ export function MusicPlayer() {
         <div className="flex items-center gap-6">
           <motion.div
             id="album-art-div"
-            className="flex h-30 w-30 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,var(--color-primary-200),var(--color-pink-600))] shadow-[0_12px_24px_color-mix(in_srgb,var(--color-black)_40%,transparent)]"
+            className="flex h-30 w-30 items-center justify-center rounded-[12px] bg-[linear-gradient(135deg,var(--color-primary-200),var(--color-pink-600))] shadow-[0_12px_24px_color-mix(in_srgb,var(--color-black)_40%,transparent)]"
             animate={{
               scale:
                 playerState === "playing"
@@ -307,6 +302,10 @@ export function MusicPlayer() {
                     ? 0.95
                     : 0.9,
               rotate: playerState === "playing" ? 360 : 0,
+              filter:
+                playerState === "loading"
+                  ? "brightness(0.65)"
+                  : "brightness(1)",
             }}
             transition={{
               scale: { type: "spring", stiffness: 200, damping: 18 },
@@ -314,6 +313,7 @@ export function MusicPlayer() {
                 playerState === "playing"
                   ? { duration: 20, repeat: Infinity, ease: "linear" }
                   : { duration: 0.3, ease: "easeOut" },
+              filter: { duration: 0.3, ease: "easeOut" },
             }}
           >
             {/* <Image
@@ -326,7 +326,9 @@ export function MusicPlayer() {
             <img
               id="album-art-image"
               src="/album-art.png"
-              alt="Music icon"
+              alt="Album art"
+              width={48}
+              height={60}
               className="h-auto w-[48px] object-fill"
             />
           </motion.div>
@@ -340,12 +342,12 @@ export function MusicPlayer() {
             </p>
           </div>
         </div>
-        <div className="ml-[144px] flex h-[28px] items-end gap-[6px]">
+        <div className="px-36 flex h-[32px] items-end gap-[4px]">
           {Array.from({ length: 5 }).map((_, index) => (
             <motion.span
               key={`bar-${index}`}
-              className={`w-[6px] bg-[var(--color-primary-200)] ${
-                isPlaying ? "rounded-full" : "rounded-[2px]"
+              className={`w-[8px] h-[6px] bg-[var(--color-primary-200)] ${
+                isPlaying ? "rounded-full" : ""
               }`}
               variants={equalizerVariants}
               animate={playerState}
@@ -382,12 +384,12 @@ export function MusicPlayer() {
           </div>
         </div>
 
-        <div className="mt-[18px] flex items-center justify-center gap-[18px]">
+        <div className="mt-[18px] flex flex-row items-center justify-center gap-4">
           <button
             type="button"
             aria-pressed={isShuffle}
             onClick={handleShuffleToggle}
-            className={`group flex h-[56px] w-[56px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+            className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
               isShuffle
                 ? "rounded-[8px] bg-[var(--color-neutral-800)]"
                 : "rounded-full"
@@ -407,7 +409,7 @@ export function MusicPlayer() {
           <button
             type="button"
             onClick={handlePrevTrack}
-            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/previous-button.svg"
@@ -424,7 +426,7 @@ export function MusicPlayer() {
             aria-busy={isLoading}
             onClick={handlePlayToggle}
             disabled={isLoading}
-            className="flex h-[68px] w-[68px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
+            className="flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
             animate={{ backgroundColor: playButtonColor }}
             transition={{ type: "spring", stiffness: 260, damping: 18 }}
             whileHover={!isLoading ? { scale: 1.05 } : undefined}
@@ -470,7 +472,7 @@ export function MusicPlayer() {
           <button
             type="button"
             onClick={handleNextTrack}
-            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
           >
             <Image
               src="/next-button.svg"
@@ -485,7 +487,7 @@ export function MusicPlayer() {
             type="button"
             aria-pressed={isRepeat}
             onClick={() => setIsRepeat((prev) => !prev)}
-            className={`group flex h-[56px] w-[56px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+            className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
               isRepeat
                 ? "rounded-[8px] bg-[var(--color-neutral-800)]"
                 : "rounded-full"
