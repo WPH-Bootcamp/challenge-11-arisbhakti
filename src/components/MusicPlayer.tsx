@@ -116,6 +116,7 @@ export function MusicPlayer() {
   const toggleTimeoutRef = useRef<number | null>(null);
   const trackHistoryRef = useRef<number[]>([]);
   const playerStateRef = useRef<PlayerState>("paused");
+  const toastTimeoutRef = useRef<number | null>(null);
 
   const [playerState, setPlayerState] = useState<PlayerState>("paused");
   const [trackIndex, setTrackIndex] = useState(0);
@@ -125,6 +126,7 @@ export function MusicPlayer() {
   const [isShuffle, setIsShuffle] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isVolumeHover, setIsVolumeHover] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const currentTrack = TRACKS[trackIndex] ?? TRACKS[0];
   const isPlaying = playerState === "playing";
@@ -237,6 +239,9 @@ export function MusicPlayer() {
       if (toggleTimeoutRef.current) {
         window.clearTimeout(toggleTimeoutRef.current);
       }
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -247,6 +252,16 @@ export function MusicPlayer() {
     toggleTimeoutRef.current = window.setTimeout(() => {
       setPlayerState(nextState);
     }, 500);
+  };
+
+  const showToast = (message: string) => {
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+    setToastMessage(message);
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastMessage(null);
+    }, 1400);
   };
 
   const handlePrevTrack = useCallback(() => {
@@ -268,6 +283,23 @@ export function MusicPlayer() {
       if (next) {
         trackHistoryRef.current = [];
       }
+      showToast(
+        next
+          ? "Shuffle aktif — lagu akan diputar secara acak."
+          : "Shuffle nonaktif.",
+      );
+      return next;
+    });
+  };
+
+  const handleRepeatToggle = () => {
+    setIsRepeat((prev) => {
+      const next = !prev;
+      showToast(
+        next
+          ? "Repeat aktif — lagu akan diputar berulang."
+          : "Repeat nonaktif.",
+      );
       return next;
     });
   };
@@ -289,6 +321,20 @@ export function MusicPlayer() {
         animate={playerState}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
+        <AnimatePresence>
+          {toastMessage ? (
+            <motion.div
+              key={toastMessage}
+              className="pointer-events-none absolute left-1/2 top-1.5 -translate-x-1/2 rounded-[10px] border border-[color-mix(in_srgb,var(--color-white)_14%,transparent)] bg-[color-mix(in_srgb,var(--color-neutral-950)_85%,transparent)] px-3.5 py-2 text-[12px] text-neutral-100 shadow-[0_10px_30px_color-mix(in_srgb,var(--color-black)_45%,transparent)] z-50 text-center font-semibold"
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {toastMessage}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
         <div className="flex items-center gap-6">
           <motion.div
             id="album-art-div"
@@ -328,7 +374,7 @@ export function MusicPlayer() {
               alt="Album art"
               width={48}
               height={60}
-              className="h-auto w-[48px] object-fill"
+              className="h-auto w-12 object-fill"
             />
           </motion.div>
 
@@ -485,7 +531,7 @@ export function MusicPlayer() {
           <button
             type="button"
             aria-pressed={isRepeat}
-            onClick={() => setIsRepeat((prev) => !prev)}
+            onClick={handleRepeatToggle}
             className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
               isRepeat
                 ? "rounded-[8px] bg-[var(--color-neutral-800)]"
