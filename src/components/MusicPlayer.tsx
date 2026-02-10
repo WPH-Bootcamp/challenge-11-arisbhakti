@@ -385,7 +385,11 @@ export function MusicPlayer() {
             type="button"
             aria-pressed={isShuffle}
             onClick={handleShuffleToggle}
-            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            className={`group flex h-[56px] w-[56px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+              isShuffle
+                ? "rounded-[8px] bg-[var(--color-neutral-800)]"
+                : "rounded-full"
+            }`}
           >
             <Image
               src="/shuffle-button.svg"
@@ -479,7 +483,11 @@ export function MusicPlayer() {
             type="button"
             aria-pressed={isRepeat}
             onClick={() => setIsRepeat((prev) => !prev)}
-            className="group flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            className={`group flex h-[56px] w-[56px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+              isRepeat
+                ? "rounded-[8px] bg-[var(--color-neutral-800)]"
+                : "rounded-full"
+            }`}
           >
             <Image
               src="/repeat-button.svg"
