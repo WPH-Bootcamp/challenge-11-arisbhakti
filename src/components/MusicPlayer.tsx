@@ -295,9 +295,9 @@ export function MusicPlayer() {
         animate={playerState}
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <div className="flex items-start gap-[20px]">
+        <div className="flex items-center gap-6">
           <motion.div
-            className="flex h-[88px] w-[88px] items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,var(--color-primary-200),var(--color-pink-600))] shadow-[0_12px_24px_color-mix(in_srgb,var(--color-black)_40%,transparent)]"
+            className="flex h-30 w-30 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,var(--color-primary-200),var(--color-pink-600))] shadow-[0_12px_24px_color-mix(in_srgb,var(--color-black)_40%,transparent)]"
             animate={{
               scale:
                 playerState === "playing"
@@ -315,40 +315,42 @@ export function MusicPlayer() {
                   : { duration: 0.3, ease: "easeOut" },
             }}
           >
-            <Image
+            {/* <Image
               src="/album-art.png"
               alt="Music icon"
-              width={40}
-              height={40}
-              className="opacity-80"
+              width={48}
+              height={60}
+              className="h-[60px] w-[48px] object-fill"
+            /> */}
+            <img
+              src="/album-art.png"
+              alt="Music icon"
+              className="h-auto w-[48px] object-fill"
             />
           </motion.div>
 
-          <div className="flex flex-1 flex-col gap-[6px]">
-            <div className="space-y-[4px]">
-              <h3 className="text-[18px] font-semibold text-[var(--color-neutral-25)]">
-                {currentTrack.title}
-              </h3>
-              <p className="text-[14px] text-[var(--color-neutral-400)]">
-                {currentTrack.artist}
-              </p>
-            </div>
-
-            <div className="mt-[8px] flex h-[28px] items-end gap-[6px]">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <motion.span
-                  key={`bar-${index}`}
-                  className={`w-[6px] bg-[var(--color-primary-200)] ${
-                    isPlaying ? "rounded-full" : "rounded-[2px]"
-                  }`}
-                  variants={equalizerVariants}
-                  animate={playerState}
-                  custom={index}
-                  initial={false}
-                />
-              ))}
-            </div>
+          <div className="flex flex-1 flex-col gap-1.25 justify-center">
+            <h3 className="text-lg font-semibold text-neutral-100 leading-8">
+              {currentTrack.title}
+            </h3>
+            <p className="text-sm leading-7 -tracking-[-0.03em] text-neutral-400 font-normal">
+              {currentTrack.artist}
+            </p>
           </div>
+        </div>
+        <div className="ml-[144px] flex h-[28px] items-end gap-[6px]">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <motion.span
+              key={`bar-${index}`}
+              className={`w-[6px] bg-[var(--color-primary-200)] ${
+                isPlaying ? "rounded-full" : "rounded-[2px]"
+              }`}
+              variants={equalizerVariants}
+              animate={playerState}
+              custom={index}
+              initial={false}
+            />
+          ))}
         </div>
 
         <div className="mt-[20px] space-y-[10px]">
