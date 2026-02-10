@@ -154,11 +154,9 @@ export function MusicPlayer() {
         : "var(--color-neutral-600)";
 
   const playButtonColor =
-    playerState === "playing"
-      ? "var(--color-primary-300)"
-      : playerState === "loading"
-        ? "var(--color-neutral-600)"
-        : "var(--color-neutral-500)";
+    playerState === "loading"
+      ? "var(--color-neutral-600)"
+      : "var(--color-primary-300)";
 
   useEffect(() => {
     playerStateRef.current = playerState;
