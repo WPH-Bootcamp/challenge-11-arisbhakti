@@ -340,7 +340,9 @@ export function MusicPlayer() {
               {Array.from({ length: 5 }).map((_, index) => (
                 <motion.span
                   key={`bar-${index}`}
-                  className="w-[6px] rounded-full bg-[var(--color-primary-200)]"
+                  className={`w-[6px] bg-[var(--color-primary-200)] ${
+                    isPlaying ? "rounded-full" : "rounded-[2px]"
+                  }`}
                   variants={equalizerVariants}
                   animate={playerState}
                   custom={index}
