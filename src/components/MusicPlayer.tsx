@@ -97,15 +97,15 @@ export function MusicPlayer() {
     playerState === "playing"
       ? "var(--color-primary-200)"
       : playerState === "loading"
-      ? "var(--color-neutral-500)"
-      : "var(--color-neutral-600)";
+        ? "var(--color-neutral-500)"
+        : "var(--color-neutral-600)";
 
   const playButtonColor =
     playerState === "playing"
       ? "var(--color-primary-300)"
       : playerState === "loading"
-      ? "var(--color-neutral-600)"
-      : "var(--color-neutral-500)";
+        ? "var(--color-neutral-600)"
+        : "var(--color-neutral-500)";
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -205,8 +205,8 @@ export function MusicPlayer() {
                 playerState === "playing"
                   ? 1
                   : playerState === "paused"
-                  ? 0.95
-                  : 0.9,
+                    ? 0.95
+                    : 0.9,
               rotate: playerState === "playing" ? 360 : 0,
             }}
             transition={{
@@ -218,7 +218,7 @@ export function MusicPlayer() {
             }}
           >
             <Image
-              src="/music-icon.svg"
+              src="/album-art.png"
               alt="Music icon"
               width={40}
               height={40}
@@ -255,7 +255,10 @@ export function MusicPlayer() {
           <div className="relative h-[6px] w-full overflow-hidden rounded-full bg-[var(--color-neutral-800)]">
             <motion.div
               className="absolute inset-0 origin-left rounded-full"
-              animate={{ scaleX: progressScale, backgroundColor: progressColor }}
+              animate={{
+                scaleX: progressScale,
+                backgroundColor: progressColor,
+              }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             />
             <input
