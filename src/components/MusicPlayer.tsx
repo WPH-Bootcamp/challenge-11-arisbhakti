@@ -316,7 +316,7 @@ export function MusicPlayer() {
   return (
     <div className="w-full max-w-125">
       <motion.div
-        className="relative overflow-hidden rounded-[28px] border border-[var(--color-neutral-800)] p-[28px] flex flex-col"
+        className="relative overflow-hidden rounded-[28px]   p-4 flex flex-col"
         variants={containerVariants}
         animate={playerState}
         transition={{ duration: 0.3, ease: "easeOut" }}
@@ -393,187 +393,189 @@ export function MusicPlayer() {
           ))}
         </div>
 
-        <div className="mt-[20px] space-y-[10px]">
-          <div className="relative h-[8px] w-full overflow-hidden rounded-full bg-[var(--color-neutral-800)]">
-            <motion.div
-              className="absolute inset-0 origin-left rounded-full"
-              animate={{
-                scaleX: progressScale,
-                backgroundColor: progressColor,
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            />
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={0.1}
-              value={progressPercent}
-              onChange={(event) => handleSeek(Number(event.target.value))}
-              aria-label="Seek"
-              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-            />
+        <div className="flex flex-col gap-5 mt-[20px]">
+          <div className=" flex flex-col gap-5">
+            <div className="relative h-[8px] w-full overflow-hidden rounded-full bg-[var(--color-neutral-800)]">
+              <motion.div
+                className="absolute inset-0 origin-left rounded-full"
+                animate={{
+                  scaleX: progressScale,
+                  backgroundColor: progressColor,
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={0.1}
+                value={progressPercent}
+                onChange={(event) => handleSeek(Number(event.target.value))}
+                aria-label="Seek"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs text-neutral-500">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between text-[12px] text-[var(--color-neutral-500)]">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+
+          <div className=" flex flex-row items-center justify-center gap-4">
+            <button
+              type="button"
+              aria-pressed={isShuffle}
+              onClick={handleShuffleToggle}
+              className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+                isShuffle
+                  ? "rounded-[8px] bg-[var(--color-neutral-800)]"
+                  : "rounded-full"
+              }`}
+            >
+              <Image
+                src="/shuffle-button.svg"
+                alt="Shuffle"
+                width={36}
+                height={36}
+                className={`transition duration-200 ${
+                  isShuffle ? "brightness-200" : "group-hover:brightness-200"
+                }`}
+              />
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrevTrack}
+              className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            >
+              <Image
+                src="/previous-button.svg"
+                alt="Previous"
+                width={36}
+                height={36}
+                className="transition duration-200 group-hover:brightness-200"
+              />
+            </button>
+
+            <motion.button
+              type="button"
+              aria-pressed={isPlaying}
+              aria-busy={isLoading}
+              onClick={handlePlayToggle}
+              disabled={isLoading}
+              className="flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
+              animate={{ backgroundColor: playButtonColor }}
+              transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              whileHover={!isLoading ? { scale: 1.05 } : undefined}
+              whileTap={!isLoading ? { scale: 0.95 } : undefined}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {isPlaying ? (
+                  <motion.span
+                    key="pause-icon"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Image
+                      src="/pause-button.svg"
+                      alt="Pause"
+                      width={24}
+                      height={24}
+                      className={isLoading ? "opacity-60" : "opacity-100"}
+                    />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="play-icon"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Image
+                      src="/play-button.svg"
+                      alt="Play"
+                      width={24}
+                      height={24}
+                      className={isLoading ? "opacity-60" : "opacity-100"}
+                    />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
+            <button
+              type="button"
+              onClick={handleNextTrack}
+              className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
+            >
+              <Image
+                src="/next-button.svg"
+                alt="Next"
+                width={36}
+                height={36}
+                className="transition duration-200 group-hover:brightness-200"
+              />
+            </button>
+
+            <button
+              type="button"
+              aria-pressed={isRepeat}
+              onClick={handleRepeatToggle}
+              className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
+                isRepeat
+                  ? "rounded-[8px] bg-[var(--color-neutral-800)]"
+                  : "rounded-full"
+              }`}
+            >
+              <Image
+                src="/repeat-button.svg"
+                alt="Repeat"
+                width={36}
+                height={36}
+                className={`transition duration-200 ${
+                  isRepeat ? "brightness-200" : "group-hover:brightness-200"
+                }`}
+              />
+            </button>
           </div>
-        </div>
 
-        <div className="mt-[18px] flex flex-row items-center justify-center gap-4">
-          <button
-            type="button"
-            aria-pressed={isShuffle}
-            onClick={handleShuffleToggle}
-            className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
-              isShuffle
-                ? "rounded-[8px] bg-[var(--color-neutral-800)]"
-                : "rounded-full"
-            }`}
-          >
+          <div className=" flex items-center gap-2">
             <Image
-              src="/shuffle-button.svg"
-              alt="Shuffle"
-              width={36}
-              height={36}
-              className={`transition duration-200 ${
-                isShuffle ? "brightness-200" : "group-hover:brightness-200"
-              }`}
+              src="/volume-icon.svg"
+              alt="Volume"
+              width={16}
+              height={16}
+              className="opacity-80"
             />
-          </button>
-
-          <button
-            type="button"
-            onClick={handlePrevTrack}
-            className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
-          >
-            <Image
-              src="/previous-button.svg"
-              alt="Previous"
-              width={36}
-              height={36}
-              className="transition duration-200 group-hover:brightness-200"
-            />
-          </button>
-
-          <motion.button
-            type="button"
-            aria-pressed={isPlaying}
-            aria-busy={isLoading}
-            onClick={handlePlayToggle}
-            disabled={isLoading}
-            className="flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out disabled:cursor-not-allowed"
-            animate={{ backgroundColor: playButtonColor }}
-            transition={{ type: "spring", stiffness: 260, damping: 18 }}
-            whileHover={!isLoading ? { scale: 1.05 } : undefined}
-            whileTap={!isLoading ? { scale: 0.95 } : undefined}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {isPlaying ? (
-                <motion.span
-                  key="pause-icon"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Image
-                    src="/pause-button.svg"
-                    alt="Pause"
-                    width={24}
-                    height={24}
-                    className={isLoading ? "opacity-60" : "opacity-100"}
-                  />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="play-icon"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Image
-                    src="/play-button.svg"
-                    alt="Play"
-                    width={24}
-                    height={24}
-                    className={isLoading ? "opacity-60" : "opacity-100"}
-                  />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-
-          <button
-            type="button"
-            onClick={handleNextTrack}
-            className="group flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded-full transition duration-200 ease-out active:scale-95"
-          >
-            <Image
-              src="/next-button.svg"
-              alt="Next"
-              width={36}
-              height={36}
-              className="transition duration-200 group-hover:brightness-200"
-            />
-          </button>
-
-          <button
-            type="button"
-            aria-pressed={isRepeat}
-            onClick={handleRepeatToggle}
-            className={`group flex h-[36px] w-[36px] cursor-pointer items-center justify-center transition duration-200 ease-out active:scale-95 ${
-              isRepeat
-                ? "rounded-[8px] bg-[var(--color-neutral-800)]"
-                : "rounded-full"
-            }`}
-          >
-            <Image
-              src="/repeat-button.svg"
-              alt="Repeat"
-              width={36}
-              height={36}
-              className={`transition duration-200 ${
-                isRepeat ? "brightness-200" : "group-hover:brightness-200"
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="mt-[18px] flex items-center gap-[12px]">
-          <Image
-            src="/volume-icon.svg"
-            alt="Volume"
-            width={16}
-            height={16}
-            className="opacity-80"
-          />
-          <div
-            className="relative h-[4px] flex-1 overflow-hidden rounded-full bg-[var(--color-neutral-800)]"
-            onMouseEnter={() => setIsVolumeHover(true)}
-            onMouseLeave={() => setIsVolumeHover(false)}
-          >
-            <motion.div
-              className="absolute inset-0 origin-left rounded-full"
-              animate={{
-                scaleX: volume,
-                backgroundColor: isVolumeHover
-                  ? "var(--color-primary-200)"
-                  : "var(--color-neutral-500)",
-              }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            />
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={(event) => setVolume(Number(event.target.value))}
-              aria-label="Volume"
-              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-            />
+            <div
+              className="relative h-[4px] flex-1 overflow-hidden rounded-full bg-[var(--color-neutral-800)]"
+              onMouseEnter={() => setIsVolumeHover(true)}
+              onMouseLeave={() => setIsVolumeHover(false)}
+            >
+              <motion.div
+                className="absolute inset-0 origin-left rounded-full"
+                animate={{
+                  scaleX: volume,
+                  backgroundColor: isVolumeHover
+                    ? "var(--color-primary-200)"
+                    : "var(--color-neutral-500)",
+                }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              />
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(event) => setVolume(Number(event.target.value))}
+                aria-label="Volume"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </div>
           </div>
         </div>
 
