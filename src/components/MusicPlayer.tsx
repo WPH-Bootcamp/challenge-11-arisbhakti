@@ -361,20 +361,11 @@ export function MusicPlayer() {
               filter: { duration: 0.3, ease: "easeOut" },
             }}
           >
-            {/* <Image
+            <Image
               src="/album-art.png"
               alt="Music icon"
               width={48}
               height={60}
-              className="h-[60px] w-[48px] object-fill"
-            /> */}
-            <img
-              id="album-art-image"
-              src="/album-art.png"
-              alt="Album art"
-              width={48}
-              height={60}
-              className="h-auto w-12 object-fill"
             />
           </motion.div>
 
