@@ -7,6 +7,7 @@
   /* Base */
   --color-white: #ffffff;
   --color-black: #000000;
+  --color-card: #0f0f0f;
 
   /* Primary */
   --color-primary-100: #a78bfa;
@@ -42,7 +43,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
-  
+
   /* Custom spacing dengan 1px ratio (1:1 bukan 1:4) */
   /* p-1 = 1px, p-4 = 4px, p-16 = 16px */
   /* Spacing sudah dikonfigurasi di tailwind.config.ts */
