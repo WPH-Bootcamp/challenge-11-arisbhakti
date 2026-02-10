@@ -173,7 +173,7 @@ export function MusicPlayer() {
       return nextIndex;
     });
   }, [isShuffle]);
-  
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -255,8 +255,6 @@ export function MusicPlayer() {
     }, 500);
   };
 
-  
-
   const handlePrevTrack = useCallback(() => {
     if (isShuffle && trackHistoryRef.current.length > 0) {
       const previousIndex = trackHistoryRef.current.pop();
@@ -290,7 +288,7 @@ export function MusicPlayer() {
   };
 
   return (
-    <div className="w-full max-w-[560px]">
+    <div className="w-full max-w-[500px]">
       <motion.div
         className="relative overflow-hidden rounded-[28px] border border-[var(--color-neutral-800)] p-[28px]"
         variants={containerVariants}
