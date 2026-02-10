@@ -150,8 +150,8 @@ export function MusicPlayer() {
     playerState === "playing"
       ? "var(--color-primary-200)"
       : playerState === "loading"
-        ? "var(--color-neutral-500)"
-        : "var(--color-neutral-600)";
+        ? "var(--color-neutral-600)"
+        : "var(--color-neutral-500)";
 
   const playButtonColor =
     playerState === "loading"
@@ -354,7 +354,7 @@ export function MusicPlayer() {
         </div>
 
         <div className="mt-[20px] space-y-[10px]">
-          <div className="relative h-[6px] w-full overflow-hidden rounded-full bg-[var(--color-neutral-800)]">
+          <div className="relative h-[8px] w-full overflow-hidden rounded-full bg-[var(--color-neutral-800)]">
             <motion.div
               className="absolute inset-0 origin-left rounded-full"
               animate={{
@@ -394,8 +394,8 @@ export function MusicPlayer() {
             <Image
               src="/shuffle-button.svg"
               alt="Shuffle"
-              width={28}
-              height={28}
+              width={36}
+              height={36}
               className={`transition duration-200 ${
                 isShuffle ? "brightness-200" : "group-hover:brightness-200"
               }`}
@@ -410,8 +410,8 @@ export function MusicPlayer() {
             <Image
               src="/previous-button.svg"
               alt="Previous"
-              width={28}
-              height={28}
+              width={36}
+              height={36}
               className="transition duration-200 group-hover:brightness-200"
             />
           </button>
@@ -473,8 +473,8 @@ export function MusicPlayer() {
             <Image
               src="/next-button.svg"
               alt="Next"
-              width={28}
-              height={28}
+              width={36}
+              height={36}
               className="transition duration-200 group-hover:brightness-200"
             />
           </button>
@@ -492,8 +492,8 @@ export function MusicPlayer() {
             <Image
               src="/repeat-button.svg"
               alt="Repeat"
-              width={28}
-              height={28}
+              width={36}
+              height={36}
               className={`transition duration-200 ${
                 isRepeat ? "brightness-200" : "group-hover:brightness-200"
               }`}
@@ -505,12 +505,12 @@ export function MusicPlayer() {
           <Image
             src="/volume-icon.svg"
             alt="Volume"
-            width={18}
-            height={18}
+            width={16}
+            height={16}
             className="opacity-80"
           />
           <div
-            className="relative h-[6px] flex-1 overflow-hidden rounded-full bg-[var(--color-neutral-800)]"
+            className="relative h-[4px] flex-1 overflow-hidden rounded-full bg-[var(--color-neutral-800)]"
             onMouseEnter={() => setIsVolumeHover(true)}
             onMouseLeave={() => setIsVolumeHover(false)}
           >
